@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Description: ENTRYPOINT for running BiStorm Docker Images in Containers
+
+# Use this file for customizing the default behavior when a container is created
+
+
+# USED TO INITIATE NGINX FROM THIS SCRIPT
+nginx -t
+set -e
+if [ "${1#-}" != "$1" ]; then
+    set -- "nginx -g pid /tmp/nginx.pid; daemon off;" "$@"
+fi
+exec "$@"
