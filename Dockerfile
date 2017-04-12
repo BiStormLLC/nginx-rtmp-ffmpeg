@@ -42,8 +42,6 @@ RUN addgroup -S nginx && \
         --with-http_addition_module \
         --with-http_sub_module \
         --with-http_dav_module \
-        --with-http_flv_module \
-        --with-http_mp4_module \
         --with-http_gunzip_module \
         --with-http_gzip_static_module \
         --with-http_random_index_module \
@@ -61,25 +59,29 @@ RUN addgroup -S nginx && \
         --with-stream_realip_module \
         --with-stream_geoip_module=dynamic \
         --with-http_slice_module \
-        --with-mail \
-        --with-mail_ssl_module \
         --with-compat \
         --with-file-aio \
         --with-http_v2_module \
         --add-module=nginx-rtmp-module" && \
-    buildDeps="autoconf \
-        automake \
-        binutils \
+    buildDeps="gcc \
+        libc-dev \
+        make \
+        openssl \
+        pcre-dev \
+        zlib-dev \
+        linux-headers \
+        curl \
+        gnupg \
+        libxslt-dev \
+        gd-dev \
+        geoip-dev \
+        perl-dev \
+        \
         build-base \
         nasm \
         tar \
         bzip2 \
         zlib-dev \
-        libc-dev \
-        openssl \
-        libstdc++ \
-        ca-certificates \
-        pcre-dev \
         yasm-dev \
         lame-dev \
         libogg-dev \
@@ -93,24 +95,29 @@ RUN addgroup -S nginx && \
         rtmpdump-dev \
         libtheora-dev \
         opus-dev \
-        cmake \
-        curl \
-        coreutils \
-        g++ \
-        gcc \
-        gnupg \
-        libtool \
+        git \
+        " && \
+    removedDeps="gcc \
+        libc-dev \
         make \
-        python \
+        openssl-dev \
+        pcre-dev \
+        zlib-dev \
         linux-headers \
+        curl \
+        gnupg \
         libxslt-dev \
         gd-dev \
         geoip-dev \
         perl-dev \
+        build-base \
+        bzip2 \
+        x264 \
+        nasm \
         git \
         " && \
     export MAKEFLAGS="-j$(($(grep -c ^processor /proc/cpuinfo) + 1))" && \
-    apk add --update --no-cache --virtual .build-deps ${buildDeps} \
+    apk add --update --no-cache ${buildDeps} \
     \
     ##
     #
@@ -206,7 +213,7 @@ RUN addgroup -S nginx && \
     # cleanup
     && make distclean \
     && rm -rf ${DIR} \
-    && apk del .build-deps \
+    && apk del ${removedDeps} \
     && rm -rf /var/cache/apk/* /usr/local/include
 
 # Add default config file with RTMP configuration
