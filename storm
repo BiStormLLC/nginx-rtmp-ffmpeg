@@ -4,6 +4,12 @@
 
 # Use this file for customizing the default behavior when a container is created
 
+# HLS and Dash directories for storing RTMP streams
+mkdir -p /tmp/hls/c /tmp/hls/d /tmp/dash/c /tmp/dash/d
+
+# Output to error and docker log collector
+ln -sf /dev/stdout /var/log/nginx-access.log 
+ln -sf /dev/stderr /var/log/nginx-error.log
 
 # USED TO INITIATE NGINX FROM THIS SCRIPT
 nginx -t
